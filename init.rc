@@ -95,38 +95,6 @@ loglevel 3
     write /proc/sys/kernel/randomize_va_space 2
     write /proc/sys/kernel/sched_tty_sched_enabled 1
 
-## mount mtd partitions
-#	# Mounting of /cache
-#	mount rfs /dev/stl14 /cache nosuid nodev check=no
-
-#    # Mounting of system/userdata is moved to 'on emmc' and 'on nand' sections
-#    # We chown/chmod /data again so because mount is run as root + defaults
-#	mount rfs /dev/stl13 /data nosuid nodev check=no
-#    chown system system /data
-#    chmod 0771 /data
-
-#    # Mount /system rw first to give the filesystem a chance to save a checkpoint
-#	mount rfs /dev/stl12 /system ro check=no
-
-#    chmod 0770 /dev/stl9
-#    chmod 0770 /dev/stl10
-#    chmod 0770 /dev/stl11
-#    chmod 0770 /dev/stl12
-#    chmod 0770 /dev/stl13
-#    chmod 0770 /dev/stl14
-#    chmod 0770 /dev/stl15
-
-#    chmod 0770 /dev/bml9
-#    chmod 0770 /dev/bml10
-#    chmod 0770 /dev/bml11
-#    chmod 0770 /dev/bml12
-#    chmod 0770 /dev/bml13
-#    chmod 0770 /dev/bml14
-#    chmod 0770 /dev/bml15
-    
-#    # for fota : bml10 param partition, bml11 fota partition
-#    chown radio /dev/bml10
-#    chown radio /dev/bml11
     
 # Create cgroup mount points for process groups
     mkdir /dev/cpuctl
@@ -146,10 +114,6 @@ loglevel 3
     chmod 0777 /dev/cpuctl/bg_non_interactive/tasks
     # 5.0 %
     write /dev/cpuctl/bg_non_interactive/cpu.shares 52
-
-# Allow everybody to read the xt_qtaguid resource tracking misc dev.
-# This is needed by any process that uses socket tagging.
-    chmod 0644 /dev/xt_qtaguid
 
 #FSR module
     insmod fsr.ko
@@ -194,9 +158,6 @@ on fs
     chown root root /system/bin/RescueServer
     chmod 0755 /system/bin/RescueServer
         
-#   mount rfs /dev/stl11 /data nosuid nodev check=no
-#   mount rfs /dev/stl10 /cache nosuid nodev
-#   mount rfs /dev/stl9 /system ro remount
 
 
 # system/userdata is moved to 'on emmc' and 'on nand' sections
@@ -250,25 +211,11 @@ chmod 0771 /efs
 #SEC_PARAM
    insmod sec_param.ko
 
-#	write /sys/block/stl12/queue/read_ahead_kb 4
-#	write /sys/block/stl13/queue/read_ahead_kb 4
-#	write /sys/block/stl14/queue/read_ahead_kb 4
-#	write /sys/devices/virtual/block/stl12/queue/read_ahead_kb 4
-#	write /sys/devices/virtual/block/stl13/queue/read_ahead_kb 4
-#	write /sys/devices/virtual/block/stl14/queue/read_ahead_kb 4
 
     # don't require sim
     setprop keyguard.no_require_sim 1
 
-#on emmc-fs
-## mount mmc partitions
-#    wait /dev/block/mmcblk0p12
-#    mount ext4 /dev/block/mmcblk0p12 /system ro barrier=1
-#    wait /dev/block/mmcblk0p13
-#    exec /system/bin/e2fsck -p /dev/block/mmcblk0p13
-#    mount ext4 /dev/block/mmcblk0p13 /data nosuid nodev barrier=1 noauto_da_alloc
-#    mount ext4 /dev/block/mmcblk0p14 /persist nosuid nodev barrier=1
-#    mount ext4 /dev/block/mmcblk0p15 /cache nosuid nodev barrier=1
+
 
 on post-fs
     # once everything is setup, no need to modify /
@@ -352,12 +299,7 @@ on post-fs
 #    mkdir /data/misc/wifi/hostapd 0770 wifi wifi
 #    chown system system /sys/devices/platform/lcdc_s6d04h0a_qvga.0/lcd_power
 #    chmod 0660 /sys/devices/platform/lcdc_s6d04h0a_qvga.0/lcd_power
-#    chown system system /sys/devices/platform/msm_sdcc.1/detect_change
-#    chown system system /sys/devices/platform/msm_sdcc.2/detect_change
-#    chown system system /sys/devices/platform/msm_sdcc.3/detect_change
-#    chown system system /sys/devices/platform/msm_sdcc.4/detect_change
-#	chown system radio /sys/devices/platform/msm-battery/power_supply/battery/talk_gsm
-#	chown system radio /sys/devices/platform/msm-battery/power_supply/battery/talk_wcdma
+
     mkdir /data/local 0771 shell shell
     mkdir /data/local/tmp 0771 shell shell
     mkdir /data/local/download 0771 system cache
@@ -420,28 +362,7 @@ on post-fs
     chown root net_raw /dev/socket
     chmod 0775 /dev/socket
 
-#    chmod 0660 /data/misc/sensors/ecs_nvm
-#    chmod 0660 /data/misc/sensors/accel_offset
-#    chmod 0664 /sys/devices/virtual/accelerometer/accelerometer/calibrate
 
-#    chown system radio /sys/devices/virtual/touch/firmware/firmware
-#    chmod 0664 /sys/devices/virtual/touch/firmware/firmware
-
-#    chown system radio /sys/devices/virtual/touch/firmware/firmware_ret
-
-#    # create ledflash cdev file for factory test
-#    chmod 0660 /dev/ledflash
-
-#    chown system system /sys/class/input/input3/enable
-#    chown system system /sys/class/input/input3/poll_delay
-#    chmod 0660 /sys/class/input/input3/enable
-#    chmod 0660 /sys/class/input/input3/poll_delay
-
-##    chmod 0666 /dev/video20
-
-## create data/gps for GPS demon
-#    mkdir /data/gps 771 gps system
-#    chown gps system /data/gps
 
 on boot
 # basic network init
@@ -592,8 +513,6 @@ on boot
 # for Dump On/Off
 	chmod 0777 /data/dump_enable
 
-## MAX8899 headset detect 
-#	chown radio system /sys/class/switch/h2w/state
 
 # Force Power Down
 	chmod 0660 /sys/class/sec/pm/power_down
@@ -617,10 +536,7 @@ on boot
 	chown system input /sys/class/input/input4/enable
 	chown system input /sys/class/input/input4/delay
 	chown system input /sys/class/input/input4/wake
-#gyro
-#	chown system input /sys/class/input/input6/enable
-#	chown system input /sys/class/input/input6/delay
-#	chown system input /sys/class/input/input6/wake
+
 
 ## sensor mounting direction
 #accelerometer
@@ -742,12 +658,6 @@ service console /system/bin/sh
     user shell
     group log
 
-#service console /sbin/sh
-#    user shell
-#    group shell system log
-#    console
-#    disabled
-
 on property:ro.debuggable=1
     start console
 
@@ -829,14 +739,6 @@ service surfaceflinger /system/bin/surfaceflinger
     group graphics
     onrestart restart zygote
 
-## for datarouter
-#service DR-daemon /system/bin/drexe
-#    user root
-#    group system radio inet net_raw
-
-#service gps-daemon /system/bin/gpsd
-#    user system
-#    group system inet
 service mobex-daemon /system/bin/npsmobex
     user system
     group system inet
